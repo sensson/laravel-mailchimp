@@ -1,71 +1,152 @@
-# :package_description
+# Laravel Mailchimp
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/sensson/laravel-mailchimp.svg?style=flat-square)](https://packagist.org/packages/sensson/laravel-mailchimp)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/sensson/laravel-mailchimp/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/sensson/laravel-mailchimp/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/sensson/laravel-mailchimp/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/sensson/laravel-mailchimp/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/sensson/laravel-mailchimp.svg?style=flat-square)](https://packagist.org/packages/sensson/laravel-mailchimp)
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+A Laravel package for the Mailchimp Marketing API with OAuth 2.0 support, built on [SaloonPHP](https://docs.saloon.dev).
 
 ## Installation
 
-You can install the package via composer:
-
 ```bash
-composer require :vendor_slug/:package_slug
+composer require sensson/laravel-mailchimp
 ```
 
-You can publish and run the migrations with:
+Publish the config file:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
+php artisan vendor:publish --tag="mailchimp-config"
 ```
 
-You can publish the config file with:
+Add your OAuth credentials to `.env`. You can create an OAuth app in [your Mailchimp account](https://admin.mailchimp.com/account/oauth2/) under **Registered Apps**:
 
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
+```env
+MAILCHIMP_CLIENT_ID=your-client-id
+MAILCHIMP_CLIENT_SECRET=your-client-secret
+MAILCHIMP_REDIRECT_URI=https://your-app.com/mailchimp/callback
 ```
 
-This is the contents of the published config file:
+## OAuth 2.0
+
+Redirect the user to Mailchimp to authorize your app:
 
 ```php
-return [
+use Sensson\Mailchimp\Facades\Mailchimp;
+
+return redirect()->to(Mailchimp::auth()->getAuthorizationUrl());
+```
+
+Handle the callback to get an access token and data center:
+
+```php
+use Sensson\Mailchimp\Enums\ServerPrefix;
+
+$token = Mailchimp::auth()->exchangeToken($request->code);
+$metadata = Mailchimp::auth()->getMetadata($token);
+$dc = ServerPrefix::from($metadata->json('dc'));
+```
+
+Store `$token` and `$dc` for later use. The `MailchimpAuth` cast makes this easy on any Eloquent model:
+
+```php
+use Sensson\Mailchimp\Casts\MailchimpAuth;
+
+protected $casts = [
+    'mailchimp' => MailchimpAuth::class,
 ];
 ```
 
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
+```php
+$user->mailchimp = (object) ['accessToken' => $token, 'serverPrefix' => $dc];
+$user->save();
 ```
 
 ## Usage
 
 ```php
-$:variable = new VendorName\Skeleton();
-echo $:variable->echoPhrase('Hello, VendorName!');
+use Sensson\Mailchimp\Facades\Mailchimp;
+
+$mailchimp = Mailchimp::make($user->mailchimp->serverPrefix, $user->mailchimp->accessToken);
+```
+
+### Audiences
+
+```php
+$audiences = $mailchimp->audiences()->all();
+
+$audience = $mailchimp->audiences()->get('list-id');
+```
+
+### Members
+
+```php
+use Sensson\Mailchimp\Data\Member;
+use Sensson\Mailchimp\Enums\MemberStatus;
+
+$members = $mailchimp->members('list-id')->all(count: 50, offset: 0);
+
+$member = $mailchimp->members('list-id')->get($subscriberHash);
+```
+
+Create or update a member:
+
+```php
+$member = new Member(
+    id: '',
+    email_address: 'john@example.com',
+    status: MemberStatus::Subscribed,
+    merge_fields: ['FNAME' => 'John', 'LNAME' => 'Doe'],
+);
+
+$mailchimp->members('list-id')->createOrUpdate($member);
+```
+
+Archive a member:
+
+```php
+$hash = md5(strtolower('john@example.com'));
+
+$mailchimp->members('list-id')->archive($hash);
+```
+
+Batch subscribe multiple members at once:
+
+```php
+$members = [
+    new Member(id: '', email_address: 'john@example.com', status: MemberStatus::Subscribed),
+    new Member(id: '', email_address: 'jane@example.com', status: MemberStatus::Subscribed),
+];
+
+$mailchimp->members('list-id')->batch($members);
 ```
 
 ## Testing
+
+Use `fake()` and `authFake()` with Saloon's `MockClient`:
+
+```php
+use Saloon\Http\Faking\MockClient;
+use Saloon\Http\Faking\MockResponse;
+use Sensson\Mailchimp\Facades\Mailchimp;
+use Sensson\Mailchimp\Requests\Audiences\ListAudiences;
+
+$mock = new MockClient([
+    ListAudiences::class => MockResponse::make([
+        'lists' => [
+            ['id' => 'abc123', 'name' => 'Newsletter', 'member_count' => 100],
+        ],
+    ]),
+]);
+
+Mailchimp::fake($mock);
+
+$audiences = Mailchimp::audiences()->all();
+
+$mock->assertSent(ListAudiences::class);
+```
+
+Run the test suite:
 
 ```bash
 composer test
@@ -75,17 +156,13 @@ composer test
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
 ## Security Vulnerabilities
 
 Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Sensson](https://github.com/sensson)
 - [All Contributors](../../contributors)
 
 ## License

@@ -5,6 +5,9 @@
 - Prefer single-word variable names over multi-word (e.g. `$audience` not `$audienceList`)
 - If a `__construct()` method has no body, use `//` as the body
 - DX is critical: follow Laravel's fluent style for package APIs
+- All PHP files must use `declare(strict_types=1)`
+- Use typed config helpers: `config()->string()`, `config()->integer()`, `config()->boolean()`, etc.
+- Always import classes with `use` statements, never use inline FQCNs
 
 ## Commits
 
