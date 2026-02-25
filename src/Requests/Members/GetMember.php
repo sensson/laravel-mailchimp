@@ -9,13 +9,13 @@ use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Sensson\Mailchimp\Data\Member;
 
-class GetMember extends Request
+final class GetMember extends Request
 {
     protected Method $method = Method::GET;
 
     public function __construct(
-        protected string $listId,
-        protected string $subscriberHash,
+        protected readonly string $listId,
+        protected readonly string $subscriberHash,
     ) {
         //
     }

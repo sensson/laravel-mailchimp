@@ -11,15 +11,15 @@ use Saloon\Http\Response;
 use Saloon\Traits\Body\HasJsonBody;
 use Sensson\Mailchimp\Data\Member;
 
-class CreateOrUpdateMember extends Request implements HasBody
+final class CreateOrUpdateMember extends Request implements HasBody
 {
     use HasJsonBody;
 
     protected Method $method = Method::PUT;
 
     public function __construct(
-        protected string $listId,
-        protected Member $member,
+        protected readonly string $listId,
+        protected readonly Member $member,
     ) {
         //
     }

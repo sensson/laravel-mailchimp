@@ -10,15 +10,15 @@ use Saloon\Http\Request;
 use Saloon\Traits\Body\HasFormBody;
 use Stringable;
 
-class ExchangeToken extends Request implements HasBody
+final class ExchangeToken extends Request implements HasBody
 {
     use HasFormBody;
 
     protected Method $method = Method::POST;
 
     public function __construct(
-        protected string $code,
-        protected string $redirectUri,
+        protected readonly string $code,
+        protected readonly string $redirectUri,
     ) {
         //
     }

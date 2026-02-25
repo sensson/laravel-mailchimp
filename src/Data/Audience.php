@@ -6,7 +6,7 @@ namespace Sensson\Mailchimp\Data;
 
 use Spatie\LaravelData\Data;
 
-class Audience extends Data
+final class Audience extends Data
 {
     public function __construct(
         public string $id,

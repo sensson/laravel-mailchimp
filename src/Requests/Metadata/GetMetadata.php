@@ -7,11 +7,11 @@ namespace Sensson\Mailchimp\Requests\Metadata;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
-class GetMetadata extends Request
+final class GetMetadata extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(protected string $accessToken)
+    public function __construct(protected readonly string $accessToken)
     {
         //
     }

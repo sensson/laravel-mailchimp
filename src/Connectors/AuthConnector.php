@@ -10,7 +10,7 @@ use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 use Sensson\Mailchimp\Requests\Auth\ExchangeToken;
 use Sensson\Mailchimp\Requests\Metadata\GetMetadata;
 
-class AuthConnector extends Connector
+final class AuthConnector extends Connector
 {
     use AlwaysThrowOnErrors;
 

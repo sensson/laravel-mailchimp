@@ -8,6 +8,12 @@
 - All PHP files must use `declare(strict_types=1)`
 - Use typed config helpers: `config()->string()`, `config()->integer()`, `config()->boolean()`, etc.
 - Always import classes with `use` statements, never use inline FQCNs
+- Use enums over string constants
+- Use `match` over `switch`
+- Use `str()` and `collect()` helpers over raw PHP string/array functions
+- Prefer `readonly` properties where a property shouldn't change after construction — if all properties are readonly, make the class `readonly`
+- Classes should be `final` unless explicitly designed for extension
+- Prefer DTOs or collections over raw arrays where it improves clarity
 
 ## Commits
 

@@ -14,11 +14,11 @@ use Sensson\Mailchimp\Requests\Members\CreateOrUpdateMember;
 use Sensson\Mailchimp\Requests\Members\GetMember;
 use Sensson\Mailchimp\Requests\Members\ListMembers;
 
-class MemberResource extends BaseResource
+final class MemberResource extends BaseResource
 {
     public function __construct(
         Connector $connector,
-        protected string $listId,
+        protected readonly string $listId,
     ) {
         parent::__construct($connector);
     }

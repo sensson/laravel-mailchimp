@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Sensson\Mailchimp\Enums\ServerPrefix;
 
 /** @implements CastsAttributes<object{accessToken: string, serverPrefix: ServerPrefix}, object{accessToken: string, serverPrefix: ServerPrefix}> */
-class MailchimpAuth implements CastsAttributes
+final readonly class MailchimpAuth implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): ?object
     {

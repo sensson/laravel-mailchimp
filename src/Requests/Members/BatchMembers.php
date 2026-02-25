@@ -10,7 +10,7 @@ use Saloon\Http\Request;
 use Saloon\Traits\Body\HasJsonBody;
 use Sensson\Mailchimp\Data\Member;
 
-class BatchMembers extends Request implements HasBody
+final class BatchMembers extends Request implements HasBody
 {
     use HasJsonBody;
 
@@ -20,9 +20,9 @@ class BatchMembers extends Request implements HasBody
      * @param  array<int, Member>  $members
      */
     public function __construct(
-        protected string $listId,
-        protected array $members,
-        protected bool $updateExisting = true,
+        protected readonly string $listId,
+        protected readonly array $members,
+        protected readonly bool $updateExisting = true,
     ) {
         //
     }

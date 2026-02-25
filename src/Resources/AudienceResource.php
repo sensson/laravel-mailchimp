@@ -10,7 +10,7 @@ use Sensson\Mailchimp\Data\Audience;
 use Sensson\Mailchimp\Requests\Audiences\GetAudience;
 use Sensson\Mailchimp\Requests\Audiences\ListAudiences;
 
-class AudienceResource extends BaseResource
+final class AudienceResource extends BaseResource
 {
     /** @return Collection<int, Audience> */
     public function all(): Collection

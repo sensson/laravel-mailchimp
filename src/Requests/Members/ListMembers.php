@@ -9,14 +9,14 @@ use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Sensson\Mailchimp\Data\Member;
 
-class ListMembers extends Request
+final class ListMembers extends Request
 {
     protected Method $method = Method::GET;
 
     public function __construct(
-        protected string $listId,
-        protected ?int $count = null,
-        protected ?int $offset = null,
+        protected readonly string $listId,
+        protected readonly ?int $count = null,
+        protected readonly ?int $offset = null,
     ) {
         //
     }

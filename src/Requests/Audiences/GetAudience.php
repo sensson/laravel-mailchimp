@@ -9,11 +9,11 @@ use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Sensson\Mailchimp\Data\Audience;
 
-class GetAudience extends Request
+final class GetAudience extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(protected string $id)
+    public function __construct(protected readonly string $id)
     {
         //
     }

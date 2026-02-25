@@ -9,7 +9,7 @@ use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\EnumCast;
 use Spatie\LaravelData\Data;
 
-class Member extends Data
+final class Member extends Data
 {
     /** @param array<string, string>|null $merge_fields */
     public function __construct(

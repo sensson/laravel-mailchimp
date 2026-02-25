@@ -6,7 +6,7 @@ namespace Sensson\Mailchimp\Exceptions;
 
 use Saloon\Exceptions\Request\Statuses\UnauthorizedException;
 
-class AccessTokenRevokedException extends UnauthorizedException
+final class AccessTokenRevokedException extends UnauthorizedException
 {
     //
 }

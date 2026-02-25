@@ -17,15 +17,15 @@ use Sensson\Mailchimp\Resources\AudienceResource;
 use Sensson\Mailchimp\Resources\MemberResource;
 use Throwable;
 
-class MailchimpConnector extends Connector
+final class MailchimpConnector extends Connector
 {
     use AcceptsJson;
     use AlwaysThrowOnErrors;
     use HasRateLimits;
 
     public function __construct(
-        protected ServerPrefix $serverPrefix,
-        protected string $accessToken,
+        protected readonly ServerPrefix $serverPrefix,
+        protected readonly string $accessToken,
     ) {
         //
     }
