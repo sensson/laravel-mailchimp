@@ -13,8 +13,8 @@ class Member extends Data
 {
     /** @param array<string, string>|null $merge_fields */
     public function __construct(
-        public string $id,
         public string $email_address,
+        public ?string $id = null,
         #[WithCast(EnumCast::class, type: MemberStatus::class)]
         public ?MemberStatus $status = null,
         public ?array $merge_fields = null,

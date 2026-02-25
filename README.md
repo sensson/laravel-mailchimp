@@ -93,7 +93,6 @@ Create or update a member:
 
 ```php
 $member = new Member(
-    id: '',
     email_address: 'john@example.com',
     status: MemberStatus::Subscribed,
     merge_fields: ['FNAME' => 'John', 'LNAME' => 'Doe'],
@@ -114,8 +113,8 @@ Batch subscribe multiple members at once:
 
 ```php
 $members = [
-    new Member(id: '', email_address: 'john@example.com', status: MemberStatus::Subscribed),
-    new Member(id: '', email_address: 'jane@example.com', status: MemberStatus::Subscribed),
+    new Member(email_address: 'john@example.com', status: MemberStatus::Subscribed),
+    new Member(email_address: 'jane@example.com', status: MemberStatus::Subscribed),
 ];
 
 $mailchimp->members('list-id')->batch($members);

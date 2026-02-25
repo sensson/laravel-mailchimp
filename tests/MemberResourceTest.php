@@ -107,7 +107,6 @@ it('creates or updates a member', function (): void {
     Mailchimp::fake($mock);
 
     $member = new Member(
-        id: '',
         email_address: 'john@example.com',
         status: MemberStatus::Subscribed,
         merge_fields: ['FNAME' => 'John'],
