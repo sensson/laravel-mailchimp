@@ -17,7 +17,10 @@ final class Member extends Data
         public ?string $id = null,
         #[WithCast(EnumCast::class, type: MemberStatus::class)]
         public ?MemberStatus $status = null,
+        #[WithCast(EnumCast::class, type: MemberStatus::class)]
+        public ?MemberStatus $status_if_new = null,
         public ?array $merge_fields = null,
+        public ?string $language = null,
         public ?string $unique_email_id = null,
         public ?int $web_id = null,
     ) {

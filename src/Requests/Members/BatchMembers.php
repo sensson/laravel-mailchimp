@@ -32,14 +32,16 @@ final class BatchMembers extends Request implements HasBody
         return "/lists/{$this->list}";
     }
 
-    /** @return array<string, array<int, array<string, string|array<string, string>|null>>|bool> */
+    /** @return array<string, array<int, array<string, string|object>>|bool> */
     protected function defaultBody(): array
     {
         return [
             'members' => array_map(fn (Member $member): array => array_filter([
                 'email_address' => $member->email_address,
                 'status' => $member->status?->value,
-                'merge_fields' => $member->merge_fields,
+                'status_if_new' => $member->status_if_new?->value,
+                'merge_fields' => (object) $member->merge_fields,
+                'language' => $member->language,
             ], fn (mixed $value): bool => $value !== null), $this->members),
             'update_existing' => $this->updateExisting,
         ];

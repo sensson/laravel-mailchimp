@@ -29,13 +29,15 @@ final class CreateOrUpdateMember extends Request implements HasBody
         return "/lists/{$this->list}/members/{$this->member->subscriberHash()}";
     }
 
-    /** @return array<string, string|array<string, string>|null> */
+    /** @return array<string, string|object> */
     protected function defaultBody(): array
     {
         return array_filter([
             'email_address' => $this->member->email_address,
             'status' => $this->member->status?->value,
-            'merge_fields' => $this->member->merge_fields,
+            'status_if_new' => $this->member->status_if_new?->value,
+            'merge_fields' => (object) $this->member->merge_fields,
+            'language' => $this->member->language,
         ], fn (mixed $value): bool => $value !== null);
     }
 
