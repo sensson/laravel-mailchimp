@@ -120,6 +120,31 @@ $members = [
 $mailchimp->members('list-id')->batch($members);
 ```
 
+Tag and untag members:
+
+```php
+$hash = md5(strtolower('john@example.com'));
+
+$mailchimp->members('list-id')->tag($hash, ['VIP', 'Early Adopter']);
+$mailchimp->members('list-id')->untag($hash, ['VIP']);
+```
+
+### Merge Fields
+
+```php
+$fields = $mailchimp->mergeFields('list-id')->all();
+```
+
+### Webhooks
+
+```php
+use Sensson\Mailchimp\Data\Webhook;
+
+$webhook = $mailchimp->webhooks('list-id')->create('https://example.com/webhook', ['subscribe', 'unsubscribe']);
+
+$mailchimp->webhooks('list-id')->delete($webhook->id);
+```
+
 ## Testing
 
 Use `fake()` and `authFake()` with Saloon's `MockClient`:
