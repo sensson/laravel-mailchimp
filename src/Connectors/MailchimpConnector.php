@@ -15,6 +15,7 @@ use Sensson\Mailchimp\Enums\ServerPrefix;
 use Sensson\Mailchimp\Exceptions\AccessTokenRevokedException;
 use Sensson\Mailchimp\Resources\AudienceResource;
 use Sensson\Mailchimp\Resources\MemberResource;
+use Sensson\Mailchimp\Resources\MergeFieldResource;
 use Throwable;
 
 final class MailchimpConnector extends Connector
@@ -71,5 +72,10 @@ final class MailchimpConnector extends Connector
     public function members(string $listId): MemberResource
     {
         return new MemberResource($this, $listId);
+    }
+
+    public function mergeFields(string $listId): MergeFieldResource
+    {
+        return new MergeFieldResource($this, $listId);
     }
 }
