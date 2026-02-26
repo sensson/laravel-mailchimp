@@ -141,6 +141,8 @@ $fields = $mailchimp->mergeFields('list-id')->all();
 use Sensson\Mailchimp\Enums\WebhookEvent;
 use Sensson\Mailchimp\Enums\WebhookSource;
 
+$webhooks = $mailchimp->webhooks('list-id')->all();
+
 $webhook = $mailchimp->webhooks('list-id')->create(
     'https://example.com/webhook',
     [WebhookEvent::Subscribe, WebhookEvent::Unsubscribe],
