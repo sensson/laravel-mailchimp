@@ -10,6 +10,8 @@ use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Saloon\Traits\Body\HasJsonBody;
 use Sensson\Mailchimp\Data\Webhook;
+use Sensson\Mailchimp\Enums\WebhookEvent;
+use Sensson\Mailchimp\Enums\WebhookSource;
 
 final class CreateWebhook extends Request implements HasBody
 {
@@ -17,11 +19,15 @@ final class CreateWebhook extends Request implements HasBody
 
     protected Method $method = Method::POST;
 
-    /** @param array<int, string> $events */
+    /**
+     * @param  array<int, WebhookEvent>  $events
+     * @param  array<int, WebhookSource>  $sources
+     */
     public function __construct(
         protected readonly string $list,
         protected readonly string $url,
         protected readonly array $events = [],
+        protected readonly array $sources = [],
     ) {
         //
     }
@@ -38,7 +44,13 @@ final class CreateWebhook extends Request implements HasBody
 
         if ($this->events !== []) {
             $body['events'] = collect($this->events)
-                ->mapWithKeys(fn (string $event): array => [$event => true])
+                ->mapWithKeys(fn (WebhookEvent $event): array => [$event->value => true])
+                ->all();
+        }
+
+        if ($this->sources !== []) {
+            $body['sources'] = collect($this->sources)
+                ->mapWithKeys(fn (WebhookSource $source): array => [$source->value => true])
                 ->all();
         }
 

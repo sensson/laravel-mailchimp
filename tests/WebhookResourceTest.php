@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 use Sensson\Mailchimp\Data\Webhook;
+use Sensson\Mailchimp\Enums\WebhookEvent;
+use Sensson\Mailchimp\Enums\WebhookSource;
 use Sensson\Mailchimp\Facades\Mailchimp;
 use Sensson\Mailchimp\Requests\Webhooks\CreateWebhook;
 use Sensson\Mailchimp\Requests\Webhooks\DeleteWebhook;
@@ -20,7 +22,7 @@ it('creates a webhook', function (): void {
 
     Mailchimp::fake($mock);
 
-    $webhook = Mailchimp::webhooks('list-123')->create('https://example.com/webhook', ['subscribe', 'unsubscribe']);
+    $webhook = Mailchimp::webhooks('list-123')->create('https://example.com/webhook', [WebhookEvent::Subscribe, WebhookEvent::Unsubscribe]);
 
     expect($webhook)
         ->toBeInstanceOf(Webhook::class)
@@ -32,6 +34,30 @@ it('creates a webhook', function (): void {
 
         return $body['url'] === 'https://example.com/webhook'
             && $body['events'] === ['subscribe' => true, 'unsubscribe' => true];
+    });
+});
+
+it('creates a webhook with sources', function (): void {
+    $mock = new MockClient([
+        CreateWebhook::class => MockResponse::make([
+            'id' => 'wh123',
+            'url' => 'https://example.com/webhook',
+        ]),
+    ]);
+
+    Mailchimp::fake($mock);
+
+    Mailchimp::webhooks('list-123')->create(
+        'https://example.com/webhook',
+        [WebhookEvent::Subscribe],
+        [WebhookSource::User, WebhookSource::Admin],
+    );
+
+    $mock->assertSent(function (CreateWebhook $request): bool {
+        $body = $request->body()->all();
+
+        return $body['events'] === ['subscribe' => true]
+            && $body['sources'] === ['user' => true, 'admin' => true];
     });
 });
 

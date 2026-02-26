@@ -138,9 +138,14 @@ $fields = $mailchimp->mergeFields('list-id')->all();
 ### Webhooks
 
 ```php
-use Sensson\Mailchimp\Data\Webhook;
+use Sensson\Mailchimp\Enums\WebhookEvent;
+use Sensson\Mailchimp\Enums\WebhookSource;
 
-$webhook = $mailchimp->webhooks('list-id')->create('https://example.com/webhook', ['subscribe', 'unsubscribe']);
+$webhook = $mailchimp->webhooks('list-id')->create(
+    'https://example.com/webhook',
+    [WebhookEvent::Subscribe, WebhookEvent::Unsubscribe],
+    [WebhookSource::User, WebhookSource::Admin],
+);
 
 $mailchimp->webhooks('list-id')->delete($webhook->id);
 ```

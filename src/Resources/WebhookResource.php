@@ -7,6 +7,8 @@ namespace Sensson\Mailchimp\Resources;
 use Saloon\Http\BaseResource;
 use Saloon\Http\Connector;
 use Sensson\Mailchimp\Data\Webhook;
+use Sensson\Mailchimp\Enums\WebhookEvent;
+use Sensson\Mailchimp\Enums\WebhookSource;
 use Sensson\Mailchimp\Requests\Webhooks\CreateWebhook;
 use Sensson\Mailchimp\Requests\Webhooks\DeleteWebhook;
 
@@ -19,11 +21,14 @@ final class WebhookResource extends BaseResource
         parent::__construct($connector);
     }
 
-    /** @param array<int, string> $events */
-    public function create(string $url, array $events = []): Webhook
+    /**
+     * @param  array<int, WebhookEvent>  $events
+     * @param  array<int, WebhookSource>  $sources
+     */
+    public function create(string $url, array $events = [], array $sources = []): Webhook
     {
         /** @var Webhook */
-        return $this->connector->send(new CreateWebhook($this->list, $url, $events))->dtoOrFail();
+        return $this->connector->send(new CreateWebhook($this->list, $url, $events, $sources))->dtoOrFail();
     }
 
     public function delete(string $webhookId): void
