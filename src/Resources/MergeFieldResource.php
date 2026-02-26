@@ -14,7 +14,7 @@ final class MergeFieldResource extends BaseResource
 {
     public function __construct(
         Connector $connector,
-        protected readonly string $listId,
+        protected readonly string $list,
     ) {
         parent::__construct($connector);
     }
@@ -23,7 +23,7 @@ final class MergeFieldResource extends BaseResource
     public function all(): Collection
     {
         /** @var array<int, MergeField> $fields */
-        $fields = $this->connector->send(new GetMergeFields($this->listId))->dtoOrFail();
+        $fields = $this->connector->send(new GetMergeFields($this->list))->dtoOrFail();
 
         return collect($fields);
     }

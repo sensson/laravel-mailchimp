@@ -13,14 +13,14 @@ final class GetMergeFields extends Request
 {
     protected Method $method = Method::GET;
 
-    public function __construct(protected readonly string $listId)
+    public function __construct(protected readonly string $list)
     {
         //
     }
 
     public function resolveEndpoint(): string
     {
-        return "/lists/{$this->listId}/merge-fields";
+        return "/lists/{$this->list}/merge-fields";
     }
 
     /** @return array<int, MergeField> */

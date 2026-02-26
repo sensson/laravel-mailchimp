@@ -14,7 +14,7 @@ final class GetMember extends Request
     protected Method $method = Method::GET;
 
     public function __construct(
-        protected readonly string $listId,
+        protected readonly string $list,
         protected readonly string $subscriberHash,
     ) {
         //
@@ -22,7 +22,7 @@ final class GetMember extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/lists/{$this->listId}/members/{$this->subscriberHash}";
+        return "/lists/{$this->list}/members/{$this->subscriberHash}";
     }
 
     public function createDtoFromResponse(Response $response): Member

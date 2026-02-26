@@ -20,7 +20,7 @@ final class BatchMembers extends Request implements HasBody
      * @param  array<int, Member>  $members
      */
     public function __construct(
-        protected readonly string $listId,
+        protected readonly string $list,
         protected readonly array $members,
         protected readonly bool $updateExisting = true,
     ) {
@@ -29,7 +29,7 @@ final class BatchMembers extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/lists/{$this->listId}";
+        return "/lists/{$this->list}";
     }
 
     /** @return array<string, array<int, array<string, string|array<string, string>|null>>|bool> */

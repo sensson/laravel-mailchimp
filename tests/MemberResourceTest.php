@@ -7,6 +7,7 @@ use Saloon\Http\Faking\MockResponse;
 use Sensson\Mailchimp\Data\Member;
 use Sensson\Mailchimp\Enums\MemberStatus;
 use Sensson\Mailchimp\Facades\Mailchimp;
+use Sensson\Mailchimp\Requests\Members\AddMemberTags;
 use Sensson\Mailchimp\Requests\Members\ArchiveMember;
 use Sensson\Mailchimp\Requests\Members\BatchMembers;
 use Sensson\Mailchimp\Requests\Members\CreateOrUpdateMember;
@@ -152,8 +153,8 @@ it('batches members', function (): void {
     Mailchimp::fake($mock);
 
     $members = [
-        new Member(id: '', email_address: 'john@example.com', status: MemberStatus::Subscribed),
-        new Member(id: '', email_address: 'jane@example.com', status: MemberStatus::Subscribed),
+        new Member(email_address: 'john@example.com', status: MemberStatus::Subscribed),
+        new Member(email_address: 'jane@example.com', status: MemberStatus::Subscribed),
     ];
 
     Mailchimp::members('list-123')->batch($members);
@@ -163,5 +164,44 @@ it('batches members', function (): void {
 
         return count($body['members']) === 2
             && $body['update_existing'] === true;
+    });
+});
+
+it('tags a member', function (): void {
+    $mock = new MockClient([
+        AddMemberTags::class => MockResponse::make([], 204),
+    ]);
+
+    Mailchimp::fake($mock);
+
+    $hash = md5('john@example.com');
+    Mailchimp::members('list-123')->tag($hash, ['VIP', 'Early Adopter']);
+
+    $mock->assertSent(function (AddMemberTags $request): bool {
+        $body = $request->body()->all();
+
+        return $body['tags'] === [
+            ['name' => 'VIP', 'status' => 'active'],
+            ['name' => 'Early Adopter', 'status' => 'active'],
+        ];
+    });
+});
+
+it('untags a member', function (): void {
+    $mock = new MockClient([
+        AddMemberTags::class => MockResponse::make([], 204),
+    ]);
+
+    Mailchimp::fake($mock);
+
+    $hash = md5('john@example.com');
+    Mailchimp::members('list-123')->untag($hash, ['VIP']);
+
+    $mock->assertSent(function (AddMemberTags $request): bool {
+        $body = $request->body()->all();
+
+        return $body['tags'] === [
+            ['name' => 'VIP', 'status' => 'inactive'],
+        ];
     });
 });

@@ -18,7 +18,7 @@ final class CreateOrUpdateMember extends Request implements HasBody
     protected Method $method = Method::PUT;
 
     public function __construct(
-        protected readonly string $listId,
+        protected readonly string $list,
         protected readonly Member $member,
     ) {
         //
@@ -26,7 +26,7 @@ final class CreateOrUpdateMember extends Request implements HasBody
 
     public function resolveEndpoint(): string
     {
-        return "/lists/{$this->listId}/members/{$this->member->subscriberHash()}";
+        return "/lists/{$this->list}/members/{$this->member->subscriberHash()}";
     }
 
     /** @return array<string, string|array<string, string>|null> */

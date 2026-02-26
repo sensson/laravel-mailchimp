@@ -14,7 +14,7 @@ final class ListMembers extends Request
     protected Method $method = Method::GET;
 
     public function __construct(
-        protected readonly string $listId,
+        protected readonly string $list,
         protected readonly ?int $count = null,
         protected readonly ?int $offset = null,
     ) {
@@ -23,7 +23,7 @@ final class ListMembers extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/lists/{$this->listId}/members";
+        return "/lists/{$this->list}/members";
     }
 
     /** @return array<string, int|null> */

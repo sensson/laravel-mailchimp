@@ -16,6 +16,7 @@ use Sensson\Mailchimp\Exceptions\AccessTokenRevokedException;
 use Sensson\Mailchimp\Resources\AudienceResource;
 use Sensson\Mailchimp\Resources\MemberResource;
 use Sensson\Mailchimp\Resources\MergeFieldResource;
+use Sensson\Mailchimp\Resources\WebhookResource;
 use Throwable;
 
 final class MailchimpConnector extends Connector
@@ -45,6 +46,10 @@ final class MailchimpConnector extends Connector
 
     protected function resolveLimits(): array
     {
+        if ($this->getMockClient() !== null) {
+            return [];
+        }
+
         return [
             Limit::allow(10)->everySeconds(1),
         ];
@@ -69,13 +74,18 @@ final class MailchimpConnector extends Connector
         return new AudienceResource($this);
     }
 
-    public function members(string $listId): MemberResource
+    public function members(string $list): MemberResource
     {
-        return new MemberResource($this, $listId);
+        return new MemberResource($this, $list);
     }
 
-    public function mergeFields(string $listId): MergeFieldResource
+    public function mergeFields(string $list): MergeFieldResource
     {
-        return new MergeFieldResource($this, $listId);
+        return new MergeFieldResource($this, $list);
+    }
+
+    public function webhooks(string $list): WebhookResource
+    {
+        return new WebhookResource($this, $list);
     }
 }
