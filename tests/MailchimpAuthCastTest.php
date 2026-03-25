@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Foundation\Auth\User;
+use Saloon\Http\Auth\AccessTokenAuthenticator;
 use Sensson\Mailchimp\Casts\MailchimpAuth;
 use Sensson\Mailchimp\Data\MailchimpToken;
 use Sensson\Mailchimp\Enums\ServerPrefix;
@@ -24,7 +25,7 @@ it('casts a legacy serialized string to a mailchimp token', function (): void {
     $user = new User;
     $user->setAttribute('server_prefix', 'us6');
 
-    $legacy = serialize(new \Saloon\Http\Auth\AccessTokenAuthenticator('token-legacy'));
+    $legacy = serialize(new AccessTokenAuthenticator('token-legacy'));
 
     $result = $cast->get($user, 'auth', $legacy, []);
 
