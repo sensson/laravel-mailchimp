@@ -125,7 +125,7 @@ it('creates or updates a member', function (): void {
 
         return $body['email_address'] === 'john@example.com'
             && $body['status'] === 'subscribed'
-            && $body['merge_fields'] === ['FNAME' => 'John'];
+            && (array) $body['merge_fields'] === ['FNAME' => 'John'];
     });
 });
 
