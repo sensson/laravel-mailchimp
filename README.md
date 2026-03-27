@@ -58,7 +58,9 @@ protected $casts = [
 ```
 
 ```php
-$user->mailchimp = (object) ['accessToken' => $token, 'serverPrefix' => $dc];
+use Sensson\Mailchimp\Data\MailchimpToken;
+
+$user->mailchimp = new MailchimpToken(accessToken: $token, serverPrefix: $dc);
 $user->save();
 ```
 

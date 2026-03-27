@@ -6,24 +6,25 @@ namespace Sensson\Mailchimp\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Sensson\Mailchimp\Data\MailchimpToken;
 use Sensson\Mailchimp\Enums\ServerPrefix;
 
-/** @implements CastsAttributes<object{accessToken: string, serverPrefix: ServerPrefix}, object{accessToken: string, serverPrefix: ServerPrefix}> */
+/** @implements CastsAttributes<MailchimpToken, MailchimpToken> */
 final readonly class MailchimpAuth implements CastsAttributes
 {
-    public function get(Model $model, string $key, mixed $value, array $attributes): ?object
+    public function get(Model $model, string $key, mixed $value, array $attributes): ?MailchimpToken
     {
         if (! is_string($value)) {
             return null;
         }
 
-        /** @var object{accessToken: string, serverPrefix: string} $decoded */
-        $decoded = json_decode($value);
+        /** @var array{accessToken: string, serverPrefix: string} $data */
+        $data = json_decode($value, true);
 
-        return (object) [
-            'accessToken' => $decoded->accessToken,
-            'serverPrefix' => ServerPrefix::from($decoded->serverPrefix),
-        ];
+        return new MailchimpToken(
+            accessToken: $data['accessToken'],
+            serverPrefix: ServerPrefix::from($data['serverPrefix']),
+        );
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
