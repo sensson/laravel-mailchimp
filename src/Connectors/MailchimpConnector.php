@@ -13,6 +13,8 @@ use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 use Sensson\Mailchimp\Enums\ServerPrefix;
 use Sensson\Mailchimp\Exceptions\AccessTokenRevokedException;
+use Sensson\Mailchimp\Exceptions\ForgottenEmailNotSubscribedException;
+use Sensson\Mailchimp\Exceptions\MemberInComplianceStateException;
 use Sensson\Mailchimp\Resources\AudienceResource;
 use Sensson\Mailchimp\Resources\MemberResource;
 use Sensson\Mailchimp\Resources\MergeFieldResource;
@@ -64,6 +66,14 @@ final class MailchimpConnector extends Connector
     {
         if ($response->status() === 401) {
             return new AccessTokenRevokedException($response, previous: $senderException);
+        }
+
+        if ($response->status() === 400) {
+            return match ($response->json('title')) {
+                'Member In Compliance State' => new MemberInComplianceStateException($response, previous: $senderException),
+                'Forgotten Email Not Subscribed' => new ForgottenEmailNotSubscribedException($response, previous: $senderException),
+                default => null,
+            };
         }
 
         return null;
