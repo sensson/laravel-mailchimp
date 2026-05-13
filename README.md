@@ -103,6 +103,19 @@ $member = new Member(
 $mailchimp->members('list-id')->createOrUpdate($member);
 ```
 
+Mailchimp blocks subscribing addresses that have previously unsubscribed, bounced, or been forgotten. These surface as typed exceptions so you can react without inspecting the response body:
+
+```php
+use Sensson\Mailchimp\Exceptions\ForgottenEmailNotSubscribedException;
+use Sensson\Mailchimp\Exceptions\MemberInComplianceStateException;
+
+try {
+    $mailchimp->members('list-id')->createOrUpdate($member);
+} catch (MemberInComplianceStateException|ForgottenEmailNotSubscribedException) {
+    // member is permanently unreachable — the contact must resubscribe themselves
+}
+```
+
 Archive a member:
 
 ```php
